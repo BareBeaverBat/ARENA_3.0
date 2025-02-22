@@ -317,7 +317,7 @@ def test_resample_simple(SAE):
     frac_active_in_window[:, features_are_dead] = 0.0
 
     # Resample latents, and get new weight values (check we have correct return type)
-    SAE.resample_simple(sae, frac_active_in_window, 0.5)
+    sae.resample_simple(frac_active_in_window, 0.5)
     new_W_dec = sae.W_dec.detach().clone()
     new_W_enc = sae.W_enc.detach().clone().transpose(-1, -2)
     new_b_enc = sae.b_enc.detach().clone()
@@ -359,7 +359,7 @@ def test_resample_simple(SAE):
     # Finally, do this again when there are no dead latents, and check it doesn't break
     frac_active_in_window = t.ones((window, sae_cfg.n_inst, sae_cfg.d_sae))
     try:
-        SAE.resample_simple(sae, frac_active_in_window, 1.0)
+        sae.resample_simple(frac_active_in_window, 1.0)
     except:
         raise Exception(
             "Error running resample_simple when no latents are dead. Have you dealt with this case correctly?"
@@ -489,7 +489,7 @@ def test_resample_advanced(SAE):
 
     if error_from_correct_answer == 0:
         print("Passed distribution tests, to see if resampling was proportional to L2.")
-        print("All tests in `test_resample_simple` passed!")
+        print("All tests in `test_resample_advanced` passed!")
     elif error_from_unnormalized_answer == 0:
         raise Exception(
             "Based on this error, you might have forgotten to subtract 'sae.b_dec' from 'h' before indexing into it to get resampling data."
